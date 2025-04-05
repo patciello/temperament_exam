@@ -1,8 +1,14 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { questions } from '@/data/questions';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, RotateCcw } from 'lucide-react-native';
 
 export default function QuizScreen() {
   const router = useRouter();
@@ -19,7 +25,7 @@ export default function QuizScreen() {
       // Calculate results
       const results = calculateTemperaments(newAnswers);
       router.push({
-        pathname: '/profile',
+        pathname: '/resultados',
         params: { results: JSON.stringify(results) },
       });
     }
@@ -30,6 +36,11 @@ export default function QuizScreen() {
       setCurrentQuestion(currentQuestion - 1);
       setAnswers(answers.slice(0, -1));
     }
+  };
+
+  const handleRetake = () => {
+    setCurrentQuestion(0);
+    setAnswers([]);
   };
 
   const calculateTemperaments = (scores: number[]): string[] => {
@@ -48,13 +59,14 @@ export default function QuizScreen() {
 
     // Find the highest score
     const maxScore = Math.max(...Object.values(categories));
-    
-    // Get all temperaments that have the highest score
-    const results = Object.entries(categories)
+
+    // Get all temperaments with the highest score (handles ties)
+    const highestTemperaments = Object.entries(categories)
       .filter(([_, score]) => score === maxScore)
       .map(([temperament]) => temperament);
 
-    return results;
+    // Return only the first highest temperament (or the only one if no tie)
+    return [highestTemperaments[0]];
   };
 
   if (currentQuestion >= questions.length) {
@@ -64,12 +76,18 @@ export default function QuizScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {currentQuestion > 0 && (
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <ArrowLeft size={24} color="#007AFF" />
-            <Text style={styles.backText}>Voltar</Text>
+        <View style={styles.header}>
+          {currentQuestion > 0 && (
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <ArrowLeft size={24} color="#007AFF" />
+              <Text style={styles.backText}>Voltar</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.retakeButton} onPress={handleRetake}>
+            <RotateCcw size={20} color="#007AFF" />
+            <Text style={styles.retakeText}>Reiniciar</Text>
           </TouchableOpacity>
-        )}
+        </View>
         <Text style={styles.progress}>
           Questão {currentQuestion + 1} de {questions.length}
         </Text>
@@ -103,14 +121,28 @@ const styles = StyleSheet.create({
     padding: 20,
     minHeight: '100%',
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
   },
   backText: {
     marginLeft: 8,
     fontSize: 16,
+    color: '#007AFF',
+  },
+  retakeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  retakeText: {
+    marginLeft: 4,
+    fontSize: 14,
     color: '#007AFF',
   },
   progress: {
