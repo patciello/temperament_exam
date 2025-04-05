@@ -1,9 +1,20 @@
 import { Tabs } from 'expo-router';
 import { ChartBar as BarChart, FileText } from 'lucide-react-native';
+import { theme } from '@/constants/theme';
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme.dark.quiz.background,
+          borderTopColor: theme.dark.border,
+        },
+        tabBarActiveTintColor: theme.dark.text,
+        tabBarInactiveTintColor: theme.dark.subtext,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
