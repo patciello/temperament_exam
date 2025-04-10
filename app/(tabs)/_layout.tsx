@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
-import { ChartBar as BarChart, FileText } from 'lucide-react-native';
+import { ChartBar as BarChart, FileText, User } from 'lucide-react-native';
 import { theme } from '@/constants/theme';
+import { ColorValue } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -25,18 +26,39 @@ export default function TabLayout() {
         name="quiz"
         options={{
           title: 'Quiz',
-          tabBarIcon: ({ color, size }) => (
-            <BarChart size={size} color={color} />
-          ),
+          tabBarIcon: ({
+            color,
+            size,
+          }: {
+            color: ColorValue;
+            size: number;
+          }) => <BarChart size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="resultados"
         options={{
           title: 'Resultados',
-          tabBarIcon: ({ color, size }) => (
-            <FileText size={size} color={color} />
-          ),
+          tabBarIcon: ({
+            color,
+            size,
+          }: {
+            color: ColorValue;
+            size: number;
+          }) => <FileText size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({
+            color,
+            size,
+          }: {
+            color: ColorValue;
+            size: number;
+          }) => <User size={size} color={color} />,
         }}
       />
     </Tabs>
